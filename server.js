@@ -12,14 +12,14 @@ const port = 5050;
 // const db = mysql.createConnection({
 //     host: 'localhost',
 //     user: 'root',
-//     password: 'fuckboy6969',
+//     password: '',
 //     database: 'game'
 // });
 
 const db = {
     host: 'localhost',  // your MySQL server host
     user: 'root',       // your MySQL username
-    password: 'fuckboy6969', // your MySQL password
+    password: '', // your MySQL password
     database: 'game', // your database name
   };
 // db.connect((err) => {
