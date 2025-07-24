@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Teams</title>
+    <style>
+        /* Basic body styling */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Georgia', serif;
+            background-color: #954535;
+            color: #EAC79E;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Centering and layout */
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            font-family: "Josefin Sans", sans-serif;
+        }
+
+        /* Container for horizontal alignment */
+        .container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        /* Styling for all inputs and buttons */
+        input, button {
+            padding: 8px 12px;
+            font-size: 1em;
+            font-family: "Doto", serif;
+            font-weight: 700;
+            background-color: #EAC79E;
+            border: 1px solid #EAC79E;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        /* Button styling */
+        button {
+            background-color: #954535;
+            color: #EAC79E;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #723b32;
+        }
+
+        /* Background for overall page */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #954535;
+            filter: blur(8px);
+            transition: background-color 0.5s ease, filter 0.5s ease;
+            z-index: -1;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <h1>Create Teams</h1>
+
+    <!-- Section for creating teams -->
+    <div class="container section">
+        <input type="number" id="teamCount" placeholder="Number of Teams" min="1">
+        <button id="createTeamsBtn">Create Teams</button>
+    </div>
+
+    <!-- Section for adding properties -->
+    <div class="container section">
+        <input type="number" id="teamCodes" placeholder="Team Code" required>
+        <input type="number" id="propertyCode" placeholder="Property Level (1, 2, 3)" required>
+        <input type="text" id="property" placeholder="Property Name" required>
+        <input type="number" id="ore" placeholder="Ore" required>
+        <input type="text" id="type" placeholder="Type (army/food/ore)" required>
+        <button id="addPropertyBtn">Add Property</button>
+    </div>
+
+    <script>
+        // Create Teams button handler
+        document.getElementById('createTeamsBtn').addEventListener('click', () => {
+            const teamCount = document.getElementById('teamCount').value;
+
+            fetch('/create-teams', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ numOfTeams: teamCount })
+            })
+            .then(response => response.text())
+            .then(data => alert(data))
+            .catch(error => console.error('Error:', error));
+        });
+
+        // Add Property button handler
+        document.getElementById('addPropertyBtn').addEventListener('click', () => {
+            const teamCode = parseInt(document.getElementById('teamCodes').value);
+            const propertyCode = parseInt(document.getElementById('propertyCode').value);
+            const ore = parseInt(document.getElementById('ore').value);
+            const type = document.getElementById('type').value;
+            const property = document.getElementById('property').value;
+
+            fetch('/append-property', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    teamCode: teamCode,
+                    propertyCode: propertyCode,
+                    propertyName: property,
+                    type: type,
+                    ore: ore
+                })
+            })
+            .then(response => response.text())
+            .then(data => alert(data))
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+
+
+
+
+
+
+<h1>TRADING</h1>
+<form id="swapForm">
+    <h3>Team 1</h3>
+    <label>Team Code: <input type="number" id="teamCode1" required></label>
+    <label>Army: <input type="number" id="army1" required></label>
+    <label>Food: <input type="number" id="food1" required></label>
+    <label>Ore: <input type="number" id="ore1" required></label>
+    <label>Property: <input type="text" id="property1" required></label>
+    <label>Type (army/food/ore): <input type="text" id="type1" required></label>
+    
+    <p>     </p>
+    <input type="number" id="propertyCode1" placeholder="Property Code team1"required><p>  </p>
+    <h3>Team 2</h3>
+    <label>Team Code: <input type="number" id="teamCode2" required></label>
+    <label>Army: <input type="number" id="army2" required></label>
+    <label>Food: <input type="number" id="food2" required></label>
+    <label>Ore: <input type="number" id="ore2" required></label>
+    <label>Property: <input type="text" id="property2" required></label>
+    <label>Type (army/food/ore): <input type="text" id="type2" required></label><br>
+    <input type="number" id="propertyCode2" placeholder="Property Code team2"required>
+    <br><br>
+    <button type="button" onclick="swapTeamResources()">Swap and Update</button><br><br><br><br>
+    <button type="button" onclick="rentResource()">RENT</button>
+</form>
+
+
+<script>
+    function swapTeamResources() {
+        const teamCode1 = parseInt(document.getElementById('teamCode1').value);
+        const army1 = parseInt(document.getElementById('army1').value);
+        const food1 = parseInt(document.getElementById('food1').value);
+        const ore1 = parseInt(document.getElementById('ore1').value);
+        const property1 = document.getElementById('property1').value;
+        const type1 = document.getElementById('type1').value;
+        const propertyCode1 = parseInt(document.getElementById('propertyCode1').value);
+
+        const teamCode2 = parseInt(document.getElementById('teamCode2').value);
+        const army2 = parseInt(document.getElementById('army2').value);
+        const food2 = parseInt(document.getElementById('food2').value);
+        const ore2 = parseInt(document.getElementById('ore2').value);
+        const property2 = document.getElementById('property2').value;
+        const type2 = document.getElementById('type2').value;
+        const propertyCode2 = parseInt(document.getElementById('propertyCode2').value);
+
+        // Start by deleting team 1's resources
+        fetch('/deleteTeamResources', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                teamCode: teamCode1, army: army1, food: food1, ore: ore1, property: property1, type: type1, propertyCode: propertyCode1
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(`Deleted data for team 1: ${data.message}`);
+
+            // If team 1 deletion is successful, proceed to delete team 2's resources
+            return fetch('/deleteTeamResources', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    teamCode: teamCode2, army: army2, food: food2, ore: ore2, property: property2, type: type2, propertyCode: propertyCode2
+                })
+            });
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(`Deleted data for team 2: ${data.message}`);
+
+            // If team 2 deletion is successful, proceed to add team 2's data to team 1
+            return fetch('/addTeamResources', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    teamCode: teamCode1, army: army2, food: food2, ore: ore2, property: property2, type: type2, propertyCode: propertyCode2
+                })
+            });
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(`Added team 2 data to team 1: ${data.message}`);
+
+            // If adding team 2's data to team 1 is successful, add team 1's data to team 2
+            return fetch('/addTeamResources', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    teamCode: teamCode2, army: army1, food: food1, ore: ore1, property: property1, type: type1, propertyCode: propertyCode1
+                })
+            });
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(`Added team 1 data to team 2: ${data.message}`);
+            // Notify user of success
+            alert('Resources swapped successfully!');
+        })
+        .catch(error => {
+            console.error('Error swapping team resources:', error);
+            // Notify user of error
+            alert('An error occurred while swapping resources.');
+        });
+    }
+</script>
+
+<script>
+    function rentResource() {
+        // Get form values
+        const teamCode1 = parseInt(document.getElementById('teamCode2').value);
+        const teamCode2 = parseInt(document.getElementById('teamCode1').value);
+        const propertyType = document.getElementById('type1').value;
+        const propertyName = document.getElementById('property1').value;
+        const propertyCode = parseInt(document.getElementById('propertyCode1').value);
+
+        // Send data to backend
+        fetch('/rentResource', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ teamCode1, teamCode2, propertyType, propertyName,propertyCode})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+</script>
+
+
+
+<h1>Updates For Next Round</h1>
+<label for="teamCodeInput">Team Code: </label>
+<input type="number" id="teamCodeInput" placeholder="Enter team code" />
+<button onclick="updateTeamResources()">Update Resources</button>
+<script>
+    async function updateTeamResources() {
+        const teamCode = document.getElementById("teamCodeInput").value; // Get the team code from the input field
+
+        if (!teamCode) {
+            alert("Please enter a team code.");
+            return;
+        }
+
+        try {
+            // Send the team code to the backend using a POST request
+            const response = await fetch('/update-team-resources', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ teamCode: teamCode }),
+            });
+
+            // Handle the response from the backend
+            const data = await response.json();
+            if (response.ok) {
+                alert(data.message); // Show success message
+            } else {
+                alert("Error: " + data.message); // Show error message
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert("There was an error processing the request.");
+        }
+    }
+</script>
+
+
+
+
+
+
+<h1>resets</h1>
+<input type="number" id="teamCo" placeholder="Number of Teams" min="1">
+<button id="createTeamsBt">Create Teams</button>
+
+<script>
+    document.getElementById('createTeamsBt').addEventListener('click', () => {
+        const teamCount = document.getElementById('teamCo').value;
+
+        fetch('/reset', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ numOfTeams: teamCount })
+        })
+        .then(response => response.text())
+        .then(data => alert(data))
+        .catch(error => console.error('Error:', error));
+    });
+</script>
+
+
+
+
+
+
+
+
+
+<label for="propertyType">Select Property Type:</label>
+<select id="propertyType">
+    <option value="">--Select--</option>
+    <option value="army">army</option>
+    <option value="food">food</option>
+    <option value="ore">ore</option>
+</select>
+
+<button onclick="transferProperty()">Transfer Property</button>
+
+<script>
+    // Function to send POST request to the backend
+    async function transferProperty() {
+        const propertyType = document.getElementById("propertyType").value;
+
+        if (!propertyType || !['army', 'food', 'ore'].includes(propertyType)) {
+            alert("Please select a valid property type: army, food, or ore.");
+            return;
+        }
+
+        try {
+            // Send POST request to the backend API
+            const response = await fetch('/round-property', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ propertyType: propertyType })
+            });
+
+            if (response.ok) {
+                const result = await response.text();
+                alert(result);
+            } else {
+                alert("Error transferring property.");
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert("Error transferring property.");
+        }
+    }
+</script>
+
+
+
+
+
+<h1>Welcome to the Team Game</h1>
+
+    <!-- Button to navigate to score page -->
+    <button onclick="window.location.href='/score.html'">View Scoreboard</button>
+
+
+
+
+    <h2>Enter Password</h2>
+    <form id="loginForm">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();  // Prevent the form from submitting the default way
+
+            const password = document.getElementById('password').value;
+
+            try {
+                // Make a POST request to the backend to validate the password
+                const response = await fetch('/check-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Redirect to welcome page if password is correct
+                    window.location.href = '/welcome';
+                } else {
+                    alert('Incorrect password');
+                }
+            } catch (err) {
+                console.error('Error:', err);
+            }
+        });
+    </script>
+
+</body>
+</html>

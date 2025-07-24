@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoreboard</title>
+    <style>
+        body {
+            background-color: #121212; /* Dark background */
+            color: #00ff00; /* Neon green text */
+            font-family: 'Courier New', monospace; /* Hacker font */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            overflow: hidden; /* Prevent overall page overflow */
+        }
+
+        h1 {
+            color: #00ff00;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 3rem;
+        }
+
+        .table-container {
+            width: 90%; /* Adjust width */
+            max-height: 60%; /* Adjust height */
+            overflow-y: auto; /* Enable vertical scrolling */
+            border: 2px solid #00ff00; /* Optional border for container */
+            border-radius: 5px;
+            background-color: #181818; /* Match the table background */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #00ff00;
+        }
+
+        th {
+            background-color: #222222; /* Slightly darker for headers */
+            color: #00ff00;
+            font-size: 1.2rem;
+            position: sticky;
+            top: 0; /* Keep table header visible while scrolling */
+            z-index: 1;
+        }
+
+        td {
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        tr:nth-child(even) {
+            background-color: #333333; /* Alternate row color */
+        }
+
+        tr:hover {
+            background-color: #444444; /* Row hover effect */
+        }
+    </style>
+</head>
+<body>
+    <h1>INFORMATION!!!!</h1>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Team Code</th>
+                    <th>Ore</th>
+                    <th>Army</th>
+                    <th>Food</th>
+                    <th>Army Properties</th>
+                    <th>Food Properties</th>
+                    <th>Ore Properties</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboardTable">
+                <!-- Data will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Fetch leaderboard data from the server when the page loads
+        window.onload = async function() {
+            try {
+                const response = await fetch('/desk');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch leaderboard');
+                }
+
+                const leaderboardData = await response.json();
+                const tableBody = document.getElementById('leaderboardTable');
+
+                // Clear any existing table rows
+                tableBody.innerHTML = '';
+
+                // Populate the table with the fetched data
+                leaderboardData.forEach(team => {
+                    const row = document.createElement('tr');
+
+                    const teamCodeCell = document.createElement('td');
+                    teamCodeCell.textContent = team.team_code;
+
+                    const oreCell = document.createElement('td');
+                    oreCell.textContent = team.ore;
+
+                    const armyCell = document.createElement('td');
+                    armyCell.textContent = team.army;
+
+                    const foodCell = document.createElement('td');
+                    foodCell.textContent = team.food;
+
+                    const armyPropertiesCell = document.createElement('td');
+                    armyPropertiesCell.textContent = team.army_properties; // Display exactly as is
+
+                    const foodPropertiesCell = document.createElement('td');
+                    foodPropertiesCell.textContent = team.food_properties; // Display exactly as is
+
+                    const orePropertiesCell = document.createElement('td');
+                    orePropertiesCell.textContent = team.ore_properties; // Display exactly as is
+
+                    row.appendChild(teamCodeCell);
+                    row.appendChild(oreCell);
+                    row.appendChild(armyCell);
+                    row.appendChild(foodCell);
+                    row.appendChild(armyPropertiesCell);
+                    row.appendChild(foodPropertiesCell);
+                    row.appendChild(orePropertiesCell);
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching leaderboard data:', error);
+            }
+        };
+    </script>
+</body>
+</html>

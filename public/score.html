@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoreboard</title>
+    <style>
+        body {
+            background-color: #1a1a1a; /* Dark background */
+            color: #f4a261; /* Retro pumpkin orange text */
+            font-family: 'Courier New', monospace; /* Retro font */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-image: url('https://www.transparenttextures.com/patterns/black-linen.png'); /* Subtle texture for background */
+        }
+
+        h1 {
+            font-size: 4rem;
+            color: #f4a261;
+            text-align: center;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+            margin-bottom: 40px;
+            animation: spookyGlow 1.5s infinite alternate;
+        }
+
+        /* Styling for the logo */
+        #logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 3rem;
+            color: #f4a261;
+            font-family: 'Courier New', monospace;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            animation: bloodDrip 2s infinite alternate;
+        }
+
+        /* Glowing effect for the table borders */
+        @keyframes tableGlow {
+            0% {
+                border-color: #f4a261;
+                box-shadow: 0 0 20px #f4a261, 0 0 40px #ff6347, 0 0 60px #f4a261;
+            }
+            50% {
+                border-color: #ff6347;
+                box-shadow: 0 0 30px #ff6347, 0 0 60px #ff6347, 0 0 90px #ff6347;
+            }
+            100% {
+                border-color: #f4a261;
+                box-shadow: 0 0 20px #f4a261, 0 0 40px #ff6347, 0 0 60px #f4a261;
+            }
+        }
+
+        table {
+            border: 6px solid #f4a261; /* More intense border glow */
+            width: 80%;
+            margin-top: 40px;
+            border-collapse: collapse;
+            background-color: #333333; /* Dark background for the table */
+            animation: tableGlow 1.5s infinite alternate;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #f4a261;
+        }
+
+        th {
+            background-color: #ff6347; /* Retro red for headers */
+            color: #fff;
+            font-size: 1.2rem;
+        }
+
+        td {
+            background-color: #444;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        tr:nth-child(even) {
+            background-color: #555; /* Alternate row color */
+        }
+
+        tr:hover {
+            background-color: #666; /* Row hover effect */
+        }
+
+        /* Spooky font effect */
+        @keyframes spookyGlow {
+            0% {
+                text-shadow: 0 0 5px #ff6347, 0 0 10px #ff6347, 0 0 15px #ff6347;
+            }
+            50% {
+                text-shadow: 0 0 10px #ff6347, 0 0 20px #ff6347, 0 0 30px #ff6347;
+            }
+            100% {
+                text-shadow: 0 0 5px #ff6347, 0 0 10px #ff6347, 0 0 15px #ff6347;
+            }
+        }
+
+        /* Blood Drip Animation for the logo */
+        @keyframes bloodDrip {
+            0% {
+                transform: translateY(0);
+                color: #f4a261;
+                text-shadow: 0 0 5px #f4a261, 0 0 10px #f4a261, 0 0 15px #f4a261;
+            }
+            50% {
+                transform: translateY(5px);
+                color: #b33a3a; /* Blood red color */
+                text-shadow: 0 0 10px #b33a3a, 0 0 20px #b33a3a, 0 0 30px #b33a3a;
+            }
+            100% {
+                transform: translateY(0);
+                color: #f4a261;
+                text-shadow: 0 0 5px #f4a261, 0 0 10px #f4a261, 0 0 15px #f4a261;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Logo: Econ Society -->
+    <div id="logo">ECON club</div>
+
+    <h1>Leaderboard</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Team Code</th>
+                <th>Ore</th>
+            </tr>
+        </thead>
+        <tbody id="leaderboardTable">
+            <!-- Data will be inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        // Fetch leaderboard data from the server when the page loads
+       // Fetch leaderboard data from the server when the page loads
+window.onload = async function() {
+    try {
+        const response = await fetch('/getLeaderboard');
+        if (!response.ok) {
+            throw new Error('Failed to fetch leaderboard');
+        }
+
+        const leaderboardData = await response.json();
+        const tableBody = document.getElementById('leaderboardTable');
+
+        // Clear any existing table rows
+        tableBody.innerHTML = '';
+
+        // Populate the table with the top 10 entries from the fetched data
+        leaderboardData.slice(0, 10).forEach(team => {
+            const row = document.createElement('tr');
+            const teamCodeCell = document.createElement('td');
+            teamCodeCell.textContent = team.team_code;
+            const oreCell = document.createElement('td');
+            oreCell.textContent = team.ore;
+
+            row.appendChild(teamCodeCell);
+            row.appendChild(oreCell);
+            tableBody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error fetching leaderboard data:', error);
+    }
+};
+
+    </script>
+
+</body>
+</html>
